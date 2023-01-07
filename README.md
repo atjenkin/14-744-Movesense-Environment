@@ -1,1 +1,1 @@
-# 14-744-Movesense-Environment
+# Mobile & Embedded Software Design: Movesense Environment
