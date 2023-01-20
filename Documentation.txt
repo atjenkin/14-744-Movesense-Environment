@@ -1,0 +1,117 @@
+Subscriptions (handling sensor data):
+
+To recieve sensor data, one must make a subscription to internal sensors. On regular intervals,
+data from these subscribed sensors will be sent through the processData() command.
+
+To subscribe to information: subscribe(const char path[], size_t pathlen, uint8_t reference);
+	path[] is the API path to the desired resource. These can be found in the generated
+	API files under resources/movesense-api, an example being "Meas/IMU6/13", specifying that
+	a measuring sensor, the IMU, should be subscribed to at a rate of 13 hertz
+
+	pathlen is the length of the path and is only used to confirm that path[] is null termnated.
+	It's reccomended to save paths as constant strings. Pathlen will then be sizeof(str)
+
+	reference becomes the reference of the subscription. When data from subscriptions gets
+	sent to processData(), it can be unclear from which subscription they originated without
+	references. All subscriptions have a nonzero(important) reference, which can be found 
+	as the clientReference attribute of a DataSub, which can be found through findDataSub()
+
+To unsubscribe, a call to unsubscribe(uint8_t reference) should be made
+	reference is the internal reference of the subscription as described above.
+Alternaitively, unsubscribeAllStreams() can be called to end all ongoing subscriptions
+
+processData(wb::ResourceId resourceId, const wb::Value &value) is called every time a notification
+from a subscription occurs. For example, subscribing to the IMU with the example path above would
+result in a call to processData with the relevant data 13 times per second. It should be noted that
+at higher subscription rates, notifications are bundled.
+	resourceId denotes the sensor that the notification came from. It is useful to differentiate
+	between subscriptions when multiple subscriptions are concurrently active. 
+		A pointer to a DataSub object can be found with findDataSub(resourceId), from which
+		the local reference can be found as the atribute clientReference.
+
+	value is the actual data and can be packaged in a variety of ways. Generally, 
+	documentation for structures for data from various sensors can be found in the 
+	generated header files.
+
+
+
+
+Communicating with the computer:
+The included webClient is designed to make communication with the movesense sensor intuitive.
+The structure of any communication to the sensor them always includes a header byte, Command,
+which can be used to tell the sensor what to do. Following values are optional and can be
+used to communicate additional data. Communications sent from the sensor will have a two byte
+header containing the type of response as well as a tag.
+
+When a command is sent from the computer, the handleCommand(uint8_t cmd, 
+const uint8_t values[], size_t len) function is called.
+	cmd is as described above and is whatever value was in the first input box of the webclient
+
+	values[] is an array of bytes corresponding to the values in the longer input box.
+	
+	len is the number of bytes in values[]
+
+sendPacket(const uint8_t data[], size_t len, uint8_t tag, uint8_t type) will send a
+message back to the computer.
+It should be noted that GATT bluetooth connections are particularly tenuous and rapidly repeated
+calls (a few dozen hertz) to sendPacket can result in lost packets.
+	data[] is the message to be sent back. It takes the form of an array of bytes.
+
+	len is the number of bytes in the data. sendPacket will only send back up to 64 bytes
+	and truncate whatever is remaining.
+
+	tag can be used to categorize and group data. This appears as the right box in the coloured
+	square in the webclient notification.
+
+	type is the type of communication and can be used to specify whether communications are 
+	direct responses to commands or other forms of information. This byte appears to the left of
+	reference in the webclient.
+
+serializeData(wb::ResourceId resourceId, const wb::Value &value) is a function for converting
+sensor notifications to serialized binary for various purposes (such as sending data back).
+	resourceId is the resourceId of the information to be parsed. Given for the function to
+	be aware of how to parse the data.
+
+	value is the data to be parsed.
+
+the parsed data is written to mSerializedData and the length of the data in bytes is returned.
+
+
+
+
+LED controlling:
+For hardware debugging, various methods of controlling the onboard LED are included.
+setLed(bool on) will set the LED to the specified level. (true -> on, false -> off)
+	
+ledSetPattern() can be used in various ways.
+	void ledSetPattern(uint16_t onDuration, uint16_t offDuration, size_t repetitions) sets
+	a pattern of blinking where the LED turns on for onDuration milliseconds and off for
+	offDuration milliseconds. It can be specified how many blinks should occur
+
+	void ledSetPattern(uint16_t* pattern) can be given a custom pattern of durations. Each
+	number refers to how long the LED stays in the subsequent state(either on or off).
+		pattern should be treated as a string. It must be null terminated.
+
+	void ledSetPattern_n(uint16_t* pattern, size_t length) is like the previous function but
+	with a specifiable maximum length to prevent overflows.
+In the methods taking in a uint16_t*, the pattern is not copied in memory so needs to remain
+in place in memory from the place from which it was called for the duration of the pattern.
+
+By default, the LED will turn on immediately on the first argument of setPattern, but can be
+made to turn off if the LED was originally on by specifying an additional parameter startOn=false.
+
+
+
+
+
+
+
+  
+
+	
+
+
+
+
+
+	
