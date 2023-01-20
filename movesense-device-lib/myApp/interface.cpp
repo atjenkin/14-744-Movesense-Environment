@@ -11,11 +11,6 @@
 enum Commands 
 {
     HELLO = 0,
-    /*
-    BLINK(HW1) = 1,
-    HW2 = 2,
-    etc.
-    */
 };
 //Responses formated as byte array with [Response, tag, data?...] (data optional)
 enum Responses 
