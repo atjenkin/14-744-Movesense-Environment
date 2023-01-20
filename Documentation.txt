@@ -1,6 +1,6 @@
 Subscriptions (handling sensor data):
 
-To recieve sensor data, one must make a subscription to internal sensors. On regular intervals,
+To receive sensor data, one must make a subscription to internal sensors. On regular intervals,
 data from these subscribed sensors will be sent through the processData() command.
 
 To subscribe to information: subscribe(const char path[], size_t pathlen, uint8_t reference);
@@ -8,8 +8,8 @@ To subscribe to information: subscribe(const char path[], size_t pathlen, uint8_
 	API files under resources/movesense-api, an example being "Meas/IMU6/13", specifying that
 	a measuring sensor, the IMU, should be subscribed to at a rate of 13 hertz
 
-	pathlen is the length of the path and is only used to confirm that path[] is null termnated.
-	It's reccomended to save paths as constant strings. Pathlen will then be sizeof(str)
+	pathlen is the length of the path and is only used to confirm that path[] is null terminated.
+	It's recommended to save paths as constant strings. Pathlen will then be sizeof(str)
 
 	reference becomes the reference of the subscription. When data from subscriptions gets
 	sent to processData(), it can be unclear from which subscription they originated without
@@ -18,7 +18,7 @@ To subscribe to information: subscribe(const char path[], size_t pathlen, uint8_
 
 To unsubscribe, a call to unsubscribe(uint8_t reference) should be made
 	reference is the internal reference of the subscription as described above.
-Alternaitively, unsubscribeAllStreams() can be called to end all ongoing subscriptions
+Alternatively, unsubscribeAllStreams() can be called to end all ongoing subscriptions
 
 processData(wb::ResourceId resourceId, const wb::Value &value) is called every time a notification
 from a subscription occurs. For example, subscribing to the IMU with the example path above would
@@ -27,7 +27,7 @@ at higher subscription rates, notifications are bundled.
 	resourceId denotes the sensor that the notification came from. It is useful to differentiate
 	between subscriptions when multiple subscriptions are concurrently active. 
 		A pointer to a DataSub object can be found with findDataSub(resourceId), from which
-		the local reference can be found as the atribute clientReference.
+		the local reference can be found as the attribute clientReference.
 
 	value is the actual data and can be packaged in a variety of ways. Generally, 
 	documentation for structures for data from various sensors can be found in the 
@@ -37,7 +37,7 @@ at higher subscription rates, notifications are bundled.
 
 
 Communicating with the computer:
-The included webClient is designed to make communication with the movesense sensor intuitive.
+The included webClient is designed to make communication with the Movesense sensor intuitive.
 The structure of any communication to the sensor them always includes a header byte, Command,
 which can be used to tell the sensor what to do. Following values are optional and can be
 used to communicate additional data. Communications sent from the sensor will have a two byte
@@ -45,7 +45,7 @@ header containing the type of response as well as a tag.
 
 When a command is sent from the computer, the handleCommand(uint8_t cmd, 
 const uint8_t values[], size_t len) function is called.
-	cmd is as described above and is whatever value was in the first input box of the webclient
+	cmd is as described above and is whatever value was in the first input box of the web client
 
 	values[] is an array of bytes corresponding to the values in the longer input box.
 	
@@ -60,12 +60,12 @@ calls (a few dozen hertz) to sendPacket can result in lost packets.
 	len is the number of bytes in the data. sendPacket will only send back up to 64 bytes
 	and truncate whatever is remaining.
 
-	tag can be used to categorize and group data. This appears as the right box in the coloured
-	square in the webclient notification.
+	tag can be used to categorize and group data. This appears as the right box in the colored
+	square in the web client notification.
 
 	type is the type of communication and can be used to specify whether communications are 
 	direct responses to commands or other forms of information. This byte appears to the left of
-	reference in the webclient.
+	reference in the web client.
 
 serializeData(wb::ResourceId resourceId, const wb::Value &value) is a function for converting
 sensor notifications to serialized binary for various purposes (such as sending data back).
