@@ -1,0 +1,151 @@
+swagger: '2.0'
+
+info:
+  version: NA
+  title: Electrocardiography - Movesense-API
+  description: |
+    This file defines API for the electrocardiography measurement.
+  x-api-type: public
+  x-api-required: false
+
+paths:
+
+  /Meas/ECG/Info:
+    get:
+      description: |
+        Get the ECG measurement settings
+      responses:
+        200:
+          description: Operation successfull
+          schema:
+            $ref: '#/definitions/ECGInfo'
+
+  /Meas/ECG/Config:
+    get:
+      description: |
+        Get current ECG configuration.
+      responses:
+        200:
+          description: Returns accelerometer configurations.
+          schema:
+            $ref: '#/definitions/ECGConfig'
+    put:
+      description: |
+        Set ECG configuration.
+      parameters:
+        - name: config
+          in: body
+          description: New configurations for the ECG.
+          required: true
+          schema:
+            $ref: '#/definitions/ECGConfig'
+      responses:
+        200:
+          description: Operation completed successfully
+        503:
+          description: |
+            Not allowed to change configuration at the moment. E.g. when
+            active subcriptions exist.
+
+  /Meas/ECG/{RequiredSampleRate}/Subscription:
+    parameters:
+      - $ref: '#/parameters/RequiredSampleRate'
+    post:
+      description: |
+        Subscription to ECG data.
+      responses:
+        200:
+          description: Operation completed successfully
+        501:
+          description: Required sample rate is not supported
+        x-notification:
+          description: |
+            Notifications comprise array of ECG data.
+            Array size between subscriptions is the same.
+          schema:
+            $ref: '#/definitions/ECGData'
+    delete:
+      description: |
+        Unsubscribe ECG data stream
+      responses:
+        200:
+          description: Operation completed successfully
+
+parameters:
+  RequiredSampleRate:
+    name: RequiredSampleRate
+    in: path
+    required: true
+    type: integer
+    format: int32
+
+definitions:
+  ECGInfo:
+    required:
+      - CurrentSampleRate
+      - AvailableSampleRates
+      - ArraySize
+      - LowPass
+      - HighPass
+    properties:
+      CurrentSampleRate:
+        description: Sample Per Second for the ECG data
+        example: 512
+        type: integer
+        format: uint16
+        x-unit: Hz
+      AvailableSampleRates:
+        description: Available sample rates for ECG data subscription
+        type: array
+        items:
+          type: integer
+          format: uint16
+          x-unit: Hz
+      ArraySize:
+        description: Array size per one notification
+        example: 16
+        type: integer
+        format: uint16
+      LowPass:
+        description: Available user settable low-pass filters. Optional in cases device does not support filters.
+        type: array
+        items:
+          type: integer
+          format: uint16
+          x-unit: Hz
+      HighPass:
+        description: Available user settable high-pass filter. Optional in case device does not support filters.
+        type: array
+        items:
+          type: number
+          format: float
+          x-unit: Hz
+
+  ECGConfig:
+    properties:
+      LowPass:
+        description: |
+         Low pass filter setting. If set must be one of values returned by /Meas/ECG/Info. If set null, disables filter
+        type: integer
+        format: uint16
+      HighPass:
+        description: |
+         High pass filter setting. If set must be one of values returned by /Meas/ECG/Info.. If set null, disables filter
+        type: number
+        format: float
+  
+  ECGData:
+    required:
+      - Samples
+      - Timestamp
+    properties:
+      Samples:
+        type: array
+        items:
+          type: integer
+          format: int32
+      Timestamp:
+        description: Local relative timestamp of measurement.
+        type: integer
+        format: uint32
+        x-unit: millisecond
