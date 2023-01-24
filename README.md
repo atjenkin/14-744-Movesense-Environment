@@ -7,8 +7,8 @@
 
 The Movesense console will display all functionality of your Movesense environment on a simple web page.
 
-1. Download the Movesense Device Library here
-2. Download/Clone the starter code from the course repository (IMPORTANT: when cloning, ensure you are in the movesense-device-lib directory from the previous step)
+1. Download the Movesense Device Library [here](https://drive.google.com/file/d/1x5zuPR8AFT9YY7iQupW7wrGgriOlhZsd/view?usp=sharing)
+2. Download/Clone the starter code from the [course repository](https://github.com/atjenkin/14-744-Movesense-Environment/) (IMPORTANT: when cloning, ensure you are in the movesense-device-lib directory from the previous step)
 3. Navigate to the web client HTML file (movesense-device-lib/myApp/web_client/Movesense Webclient.html)
 4. Connect a Movesense device and input '0' into the command input to ensure the 'Hello' command works as provided in the starter code
 
@@ -19,7 +19,7 @@ The Movesense console will display all functionality of your Movesense environme
 
 A key tool for your development environment throughout this course is the Movesense showcase app. This will provide an interface to view your sensor data in real time, and to update your device's firmware.
 
-The Movesense Showcase App can be downloaded on your smartphone: iOS or Android
+The Movesense Showcase App can be downloaded on your smartphone: [iOS](https://apps.apple.com/us/app/movesense-showcase/id1439876677) or [Android](https://bitbucket.org/movesense/movesense-mobile-lib/src/master/android/)
 
 
 
@@ -86,9 +86,9 @@ The created Movesense_combined.hex and the DFU packages can be found in the same
 
 The produced DFU package must now be uploaded to the Movesense device through the showcase app. This can be completed with the following steps:
 
-- Install the Movesense Showcase App on your smart phone (both IOS and Android versions available). 
+- Install the Movesense Showcase App on your smart phone (both [iOS](https://apps.apple.com/us/app/movesense-showcase/id1439876677) and [Android](https://bitbucket.org/movesense/movesense-mobile-lib/src/master/android/) versions available). 
 - Send the DFU zip file, which should be named as Movesense_dfu.zip or something similar, to your smart phone. Place the file under the "Movesense" folder.
-- Open the Movesense Showcase app and connect your sensor. Select the sensor you want to pair from the sensors list. (Ensure that you have turned on Bluetooth on your phone, and refer to the video guide Links to an external site if you need help)
+- Open the Movesense Showcase app and connect your sensor. Select the sensor you want to pair from the sensors list. (Ensure that you have turned on Bluetooth on your phone, and refer to the [video guide](https://www.youtube.com/watch?v=Sz4HOxFwVFE) Links to an external site if you need help)
 - Go to "Device Firmware Upgrade" and "Select firmware".
 - The DFU zip file that we just created should now be visible in the "Uploaded files". Choose your file and then tap "Select Firmware".
 - Confirm the sensor location by choosing "Available DFU Target" on the list. Your sensor will go to DFU mode and red light is on. Tap "Update Selected Target" to start the update.
