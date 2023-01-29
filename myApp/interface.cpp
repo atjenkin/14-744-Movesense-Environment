@@ -11,6 +11,8 @@
 enum Commands 
 {
     HELLO = 0,
+    BEGIN_SUB=1,
+    END_SUB=2,
 };
 //Responses formated as byte array with [Response, tag, data?...] (data optional)
 enum Responses 
@@ -20,6 +22,9 @@ enum Responses
     ERROR = 3,
 };
           
+const char IMUPath[]="/Meas/IMU6/104";
+const uint8_t DEFAULT_REFERENCE=99; //appears as 63 in hex
+
 void myApp::handleCommand(uint8_t cmd, const uint8_t values[], size_t len){
     switch (cmd)
     {
@@ -33,7 +38,20 @@ void myApp::handleCommand(uint8_t cmd, const uint8_t values[], size_t len){
             sendPacket(helloMsg, sizeof(helloMsg), tag, Responses::COMMAND_RESULT);
         }
         break;
-        
+        case Commands::BEGIN_SUB:
+        {
+            //unsubscribes to prevent duplicate subscriptions
+            unsubscribe(DEFAULT_REFERENCE);
+            //subscribes to the path given above, in this case the IMU at 104hz
+            subscribe(IMUPath, sizeof(IMUPath), DEFAULT_REFERENCE);
+        }
+        break;
+        case Commands::END_SUB:
+        {
+            //unsubscribes only from default service
+            unsubscribe(DEFAULT_REFERENCE);
+        }
+        break;
     }
 }
 
